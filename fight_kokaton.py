@@ -146,6 +146,9 @@ class Bomb:
 
 
 class Score:
+    """
+    スコアに関するクラス
+    """
     def __init__(self):
         self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
         self.score = 0
@@ -154,12 +157,25 @@ class Score:
         self.rct.center = (100, HEIGHT-50)
 
     def update(self, screen):
+        """
+        スコアを更新し、画面に表示する
+        引数：
+            screen (pg.Surface): 画面Surface
+        """
         self.img = self.fonto.render(f"スコア：{self.score}", 0, (0, 0, 255))
         screen.blit(self.img, self.rct)
 
 
 class Explosion:
-    def __init__(self, bomb):
+    """
+    爆発に関するクラス
+    """
+    def __init__(self, bomb: Bomb):
+        """
+        爆発のアニメーションを生成する
+        引数：
+            bomb (Bomb): 爆弾のインスタンス
+        """
         self.img1 = pg.image.load(f"fig/explosion.gif")
         self.img2 = pg.transform.flip(self.img1, True, True)
         self.imgs = [self.img1, self.img2]
@@ -168,6 +184,11 @@ class Explosion:
         self.life = 50
 
     def update(self, screen):
+        """
+        爆発アニメーションを更新し、画面に表示する
+        引数：
+            screen (pg.Surface): 画面Surface
+        """
         self.life -= 1
         if self.life > 0:
             ind = (self.life // 10) % 2
@@ -175,6 +196,9 @@ class Explosion:
 
 
 class Limit:
+    """
+    制限時間に関するクラス
+    """
     def __init__(self):
         self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
         self.time = 10
@@ -183,6 +207,11 @@ class Limit:
         self.rct.center = (100, 50)
 
     def update(self, screen):
+        """
+        制限時間を更新し、画面に表示する
+        引数：
+            screen (pg.Surface): 画面Surface
+        """
         self.img = self.fonto.render(f"制限時間：{self.time}", 0, (0, 0, 255))
         screen.blit(self.img, self.rct)
 
