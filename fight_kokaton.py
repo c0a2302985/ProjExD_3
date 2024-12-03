@@ -174,6 +174,19 @@ class Explosion:
             screen.blit(self.imgs[ind], self.rct)
 
 
+class Limit:
+    def __init__(self):
+        self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
+        self.time = 10
+        self.img = self.fonto.render(f"制限時間：{self.time}", 0, (255, 0, 0))
+        self.rct = self.img.get_rect()
+        self.rct.center = (100, 50)
+
+    def update(self, screen):
+        self.img = self.fonto.render(f"制限時間：{self.time}", 0, (0, 0, 255))
+        screen.blit(self.img, self.rct)
+
+
 def main():
     NUM_OF_BOMBS = 5
     pg.display.set_caption("たたかえ！こうかとん")
@@ -187,6 +200,7 @@ def main():
     clock = pg.time.Clock()
     score = Score()
     expls = []
+    limit = Limit()
     tmr = 0
     while True:
         for event in pg.event.get():
@@ -208,6 +222,14 @@ def main():
                 pg.display.update()
                 time.sleep(1)
                 return
+        
+        if limit.time == 0:
+            fonto = pg.font.Font(None, 80)
+            txt = fonto.render("end", True, (255, 0, 0))
+            screen.blit(txt, [WIDTH//2-80, HEIGHT//2])
+            pg.display.update()
+            time.sleep(1)
+            return
 
         for i, beam in enumerate(beams):
             if check_bound(beams[i].rct) != (True, True):
@@ -239,6 +261,9 @@ def main():
         expls = [expl for expl in expls if expl.life > 0]
         for expl in expls:
             expl.update(screen)
+        if (tmr != 0) and (tmr % 50 == 0):
+            limit.time -= 1
+        limit.update(screen)
         pg.display.update()
         tmr += 1
         clock.tick(50)
