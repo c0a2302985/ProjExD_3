@@ -1,3 +1,4 @@
+import math
 import os
 import random
 import sys
@@ -55,6 +56,7 @@ class Bird:
         self.img = __class__.imgs[(+5, 0)]
         self.rct: pg.Rect = self.img.get_rect()
         self.rct.center = xy
+        self.dire = (+5, 0)
 
     def change_img(self, num: int, screen: pg.Surface):
         """
@@ -82,6 +84,8 @@ class Bird:
         if not (sum_mv[0] == 0 and sum_mv[1] == 0):
             self.img = __class__.imgs[tuple(sum_mv)]
         screen.blit(self.img, self.rct)
+        if sum_mv != [0, 0]:
+            self.dire = (sum_mv[0], sum_mv[1])
 
 
 class Beam:
@@ -93,11 +97,12 @@ class Beam:
         ビーム画像Surfaceを生成する
         引数 bird：ビームを放つこうかとん（Birdインスタンス）
         """
-        self.img = pg.image.load(f"fig/beam.png")
+        self.vx, self.vy = bird.dire[0], bird.dire[1]
+        self.img = pg.transform.rotozoom(pg.image.load(f"fig/beam.png"), math.degrees(math.atan2(-self.vy, self.vx)), 1)
         self.rct = self.img.get_rect()
-        self.rct.centery = bird.rct.centery
-        self.rct.left = bird.rct.right
-        self.vx, self.vy = +5, 0
+        self.rct.centerx = bird.rct.centerx + (bird.rct.right - bird.rct.left) * self.vx / 5
+        self.rct.centery = bird.rct.centery + (bird.rct.bottom - bird.rct.top) * self.vy / 5
+
 
     def update(self, screen: pg.Surface):
         """
@@ -203,6 +208,10 @@ def main():
                 pg.display.update()
                 time.sleep(1)
                 return
+
+        for i, beam in enumerate(beams):
+            if check_bound(beams[i].rct) != (True, True):
+                beams[i] = None
 
         for i, bomb in enumerate(bombs):
             for j, beam in enumerate(beams):
